@@ -91,7 +91,7 @@ const allDepartment = () => {
   const query = "SELECT * FROM department";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    res.forEach(({ id, name }) => console.log(`${id}. ${name}`));
+    res.forEach(({ name }) => console.log(`${name}`));
     mainMenu();
   });
 };
@@ -104,7 +104,15 @@ const addDepartment = () => {
       message: 'What is the name of the new Department',
     })
     .then((answer) => {
+      const query = "INSERT INTO department SET name = ?";
+      connection.query(query,[answer.action], (err, res) => {
+        if (err) throw err;
+       console.log(res)
+      });
+      
       console.log("Standby");
+      // INSERT INTO department SET name = "Engineering";
      
     });
 };
+
