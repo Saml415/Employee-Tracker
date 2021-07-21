@@ -15,9 +15,9 @@ const connection = mysql.createConnection({
   database: "employeedb",
 });
 connection.connect((err) => {
-    if (err) throw err;
-    mainMenu();
-  });
+  if (err) throw err;
+  mainMenu();
+});
 
 const mainMenu = () => {
   inquirer
@@ -25,9 +25,56 @@ const mainMenu = () => {
       name: "commands",
       type: "list",
       message: "What would you like to do?",
-      choices: ["View All Employees","View All Employees By Department","View All Employees By Manager","Add Employee", "Update Employee Role"]
+      choices: [
+        "View All Employees",
+        "View All Roles",
+        "View All Departments",
+        "Add Employee",
+        "Add Role",
+        "Add Department",
+        "Update Employee Managers",
+        "Exit",
+      ],
     })
     .then((answer) => {
-      mainMenu();
+      switch (answer.commands) {
+        case "View All Employees":
+          allEmployee();
+          break;
+        case "View All Roles":
+          allRole();
+          break;
+        case "View All Departments":
+          allDepartment();
+          break;
+      }
     });
+};
+
+const allEmployee = () => {
+  const query = "SELECT * FROM employee";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    res.forEach(({ id, first_name, last_name }) =>
+      console.log(`${id}. ${first_name} ${last_name}`)
+    );
+  });
+};
+
+const allRole = () => {
+  const query = "SELECT * FROM role";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    res.forEach(({ id, title, salary }) =>
+      console.log(`${id}. ${title} || $${salary}`)
+    );
+  });
+};
+
+const allDepartment = () => {
+  const query = "SELECT * FROM department";
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    res.forEach(({ id, name }) => console.log(`${id}. ${name}`));
+  });
 };
