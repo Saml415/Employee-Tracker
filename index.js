@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+const cTable = require("console.table");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -54,7 +55,7 @@ const mainMenu = () => {
           console.log("Come Back Soon!");
           break;
         case "Add Department":
-          console.log("Come Back Soon!");
+          addDepartment();
           break;
         case "Update Employee Managers":
           console.log("Come Back Soon!");
@@ -71,7 +72,7 @@ const allEmployee = () => {
   connection.query(query, (err, res) => {
     if (err) throw err;
     res.forEach(({ id, first_name, last_name }) =>
-      console.log(`${id}. ${first_name} ${last_name}`)
+      console.table(`${id}. ${first_name} ${last_name}`)
     );
   });
 };
@@ -93,4 +94,17 @@ const allDepartment = () => {
     res.forEach(({ id, name }) => console.log(`${id}. ${name}`));
     mainMenu();
   });
+};
+
+const addDepartment = () => {
+  inquirer
+    .prompt({
+      name: 'action',
+      type: 'input',
+      message: 'What is the name of the new Department',
+    })
+    .then((answer) => {
+      console.log("Standby");
+     
+    });
 };
