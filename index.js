@@ -47,6 +47,21 @@ const mainMenu = () => {
         case "View All Departments":
           allDepartment();
           break;
+        case "Add Employee":
+          console.log("Come Back Soon!");
+          break;
+        case "Add Role":
+          console.log("Come Back Soon!");
+          break;
+        case "Add Department":
+          console.log("Come Back Soon!");
+          break;
+        case "Update Employee Managers":
+          console.log("Come Back Soon!");
+          break;
+        case "Exit":
+          connection.end();
+          break;
       }
     });
 };
