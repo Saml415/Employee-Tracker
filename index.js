@@ -91,5 +91,6 @@ const allDepartment = () => {
   connection.query(query, (err, res) => {
     if (err) throw err;
     res.forEach(({ id, name }) => console.log(`${id}. ${name}`));
+    mainMenu();
   });
 };
