@@ -52,7 +52,7 @@ const mainMenu = () => {
           console.log("Come Back Soon!");
           break;
         case "Add Role":
-          console.log("Come Back Soon!");
+          addRole();
           break;
         case "Add Department":
           addDepartment();
@@ -82,8 +82,8 @@ const allRole = () => {
   connection.query(query, (err, res) => {
     if (err) throw err;
     res.forEach(({ id, title, salary }) =>
-      console.log(`${id}. ${title} || $${salary}`)
-    );
+      console.log(`${id}. ${title} || $${salary}`));
+      mainMenu();
   });
 };
 
@@ -91,7 +91,7 @@ const allDepartment = () => {
   const query = "SELECT * FROM department";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    res.forEach(({ name }) => console.log(`${name}`));
+    res.forEach(({ id, name }) => console.log(`${id}. ${name}`));
     mainMenu();
   });
 };
@@ -99,20 +99,64 @@ const allDepartment = () => {
 const addDepartment = () => {
   inquirer
     .prompt({
-      name: 'action',
-      type: 'input',
-      message: 'What is the name of the new Department',
+      name: "action",
+      type: "input",
+      message: "What is the name of the new Department",
     })
     .then((answer) => {
       const query = "INSERT INTO department SET name = ?";
-      connection.query(query,[answer.action], (err, res) => {
+      connection.query(query, [answer.action], (err, res) => {
         if (err) throw err;
-       console.log(res)
+        console.log(res);
+        allDepartment();
       });
-      
-      console.log("Standby");
+
       // INSERT INTO department SET name = "Engineering";
-     
     });
 };
 
+const addRole = () => {
+  const query = "SELECT * FROM department";
+  connection.query(query, [], (err, res) => {
+    if (err) throw err;
+    const choiceNames = []
+    for(let i = 0; i<res.length; i++){
+      const object = {
+        name:res[i].name,
+        value: res[i].id
+      }
+      choiceNames.push(object)
+    }
+    console.log(choiceNames)
+    inquirer
+    .prompt([
+      {
+        name: "title",
+        type: "input",
+        message: "What is the name of the new Role?",
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "What is the salary of the new Role?",
+      },
+      {
+        name: "department_id",
+        type: "list",
+        message: "What department does this role fall under?",
+        choices: choiceNames,
+      }
+    ])
+    .then((answer) => {
+      console.log(answer)
+      const query = "INSERT INTO role SET ?";
+      connection.query(query, answer, (err, res) => {
+        if (err) throw err;
+        console.log(res);
+        allRole();
+      });
+    });
+  });
+
+
+};
