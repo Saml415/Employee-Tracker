@@ -33,7 +33,7 @@ const mainMenu = () => {
         "Add Employee",
         "Add Role",
         "Add Department",
-        "Update Employee Managers",
+        "Update Employee Roles",
         "Exit",
       ],
     })
@@ -57,7 +57,7 @@ const mainMenu = () => {
         case "Add Department":
           addDepartment();
           break;
-        case "Update Employee Managers":
+        case "Update Employee Roles":
           console.log("Come Back Soon!");
           break;
         case "Exit":
@@ -71,19 +71,18 @@ const allEmployee = () => {
   const query = "SELECT * FROM employee";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    res.forEach(({ id, first_name, last_name }) =>
-      console.table(`${id}. ${first_name} ${last_name}`)
-    );
+    console.table(res);
+    mainMenu();
   });
 };
 
 const allRole = () => {
-  const query = "SELECT department_id, title, salary, department.name AS department_name FROM role INNER JOIN department ON role.department_id = department.id";
+  const query =
+    "SELECT department_id, title, salary, department.name AS department_name FROM role INNER JOIN department ON role.department_id = department.id";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    res.forEach(({ department_id, title, salary, department_name }) =>
-      console.log(`${department_id}. ${title} || $${salary} || ${department_name}`));
-      mainMenu();
+    console.table(res);
+    mainMenu();
   });
 };
 
@@ -91,7 +90,7 @@ const allDepartment = () => {
   const query = "SELECT * FROM department";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    res.forEach(({ id, name }) => console.log(`${id}. ${name}`));
+    console.table(res)
     mainMenu();
   });
 };
@@ -117,43 +116,42 @@ const addRole = () => {
   const query = "SELECT * FROM department";
   connection.query(query, [], (err, res) => {
     if (err) throw err;
-    const choiceNames = []
-    for(let i = 0; i<res.length; i++){
+    const choiceNames = [];
+    for (let i = 0; i < res.length; i++) {
       const object = {
-        name:res[i].name,
-        value: res[i].id
-      }
-      choiceNames.push(object)
+        name: res[i].name,
+        value: res[i].id,
+      };
+      choiceNames.push(object);
     }
-    console.log(choiceNames)
     inquirer
-    .prompt([
-      {
-        name: "title",
-        type: "input",
-        message: "What is the name of the new Role?",
-      },
-      {
-        name: "salary",
-        type: "input",
-        message: "What is the salary of the new Role?",
-      },
-      {
-        name: "department_id",
-        type: "list",
-        message: "What department does this role fall under?",
-        choices: choiceNames,
-      }
-    ])
-    .then((answer) => {
-      console.log(answer)
-      const query = "INSERT INTO role SET ?";
-      connection.query(query, answer, (err, res) => {
-        if (err) throw err;
-        console.log(res);
-        allRole();
+      .prompt([
+        {
+          name: "title",
+          type: "input",
+          message: "What is the name of the new Role?",
+        },
+        {
+          name: "salary",
+          type: "input",
+          message: "What is the salary of the new Role?",
+        },
+        {
+          name: "department_id",
+          type: "list",
+          message: "What department does this role fall under?",
+          choices: choiceNames,
+        },
+      ])
+      .then((answer) => {
+        console.log(answer);
+        const query = "INSERT INTO role SET ?";
+        connection.query(query, answer, (err, res) => {
+          if (err) throw err;
+          console.log(res);
+          allRole();
+        });
       });
-    });
   });
 };
 
@@ -161,42 +159,45 @@ const addEmployee = () => {
   const query = "SELECT * FROM department";
   connection.query(query, [], (err, res) => {
     if (err) throw err;
-    const choiceNames = []
-    for(let i = 0; i<res.length; i++){
+    const choiceNames = [];
+    for (let i = 0; i < res.length; i++) {
       const object = {
-        name:res[i].name,
-        value: res[i].id
-      }
-      choiceNames.push(object)
+        name: res[i].name,
+        value: res[i].id,
+      };
+      choiceNames.push(object);
     }
-    console.log(choiceNames)
     inquirer
-    .prompt([
-      {
-        name: "first_name",
-        type: "input",
-        message: "What is the name of the new Role?",
-      },
-      {
-        name: "last_name",
-        type: "input",
-        message: "What is the salary of the new Role?",
-      },
-      {
-        name: "department_id",
-        type: "list",
-        message: "What department does this role fall under?",
-        choices: choiceNames,
-      }
-    ])
-    .then((answer) => {
-      console.log(answer)
-      const query = "INSERT INTO role SET ?";
-      connection.query(query, answer, (err, res) => {
-        if (err) throw err;
-        console.log(res);
-        allRole();
+      .prompt([
+        {
+          name: "first_name",
+          type: "input",
+          message: "What is the name of the new Role?",
+        },
+        {
+          name: "last_name",
+          type: "input",
+          message: "What is the salary of the new Role?",
+        },
+        {
+          name: "role_id",
+          type: "list",
+          message: "What role does your employee have?",
+          choices: choiceNames,
+        },
+      ])
+      .then((answer) => {
+        console.log(answer);
+        const query = "INSERT INTO role SET ?";
+        connection.query(query, answer, (err, res) => {
+          if (err) throw err;
+          console.log(res);
+          allRole();
+        });
       });
-    });
   });
 };
+
+const updateRole = () => {
+
+}
