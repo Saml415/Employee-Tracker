@@ -78,11 +78,11 @@ const allEmployee = () => {
 };
 
 const allRole = () => {
-  const query = "SELECT * FROM role";
+  const query = "SELECT department_id, title, salary, department.name AS department_name FROM role INNER JOIN department ON role.department_id = department.id";
   connection.query(query, (err, res) => {
     if (err) throw err;
-    res.forEach(({ id, title, salary }) =>
-      console.log(`${id}. ${title} || $${salary}`));
+    res.forEach(({ department_id, title, salary, department_name }) =>
+      console.log(`${department_id}. ${title} || $${salary} || ${department_name}`));
       mainMenu();
   });
 };
