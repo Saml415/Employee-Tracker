@@ -49,7 +49,7 @@ const mainMenu = () => {
           allDepartment();
           break;
         case "Add Employee":
-          console.log("Come Back Soon!");
+          addEmployee();
           break;
         case "Add Role":
           addRole();
@@ -110,8 +110,6 @@ const addDepartment = () => {
         console.log(res);
         allDepartment();
       });
-
-      // INSERT INTO department SET name = "Engineering";
     });
 };
 
@@ -157,6 +155,48 @@ const addRole = () => {
       });
     });
   });
+};
 
-
+const addEmployee = () => {
+  const query = "SELECT * FROM department";
+  connection.query(query, [], (err, res) => {
+    if (err) throw err;
+    const choiceNames = []
+    for(let i = 0; i<res.length; i++){
+      const object = {
+        name:res[i].name,
+        value: res[i].id
+      }
+      choiceNames.push(object)
+    }
+    console.log(choiceNames)
+    inquirer
+    .prompt([
+      {
+        name: "first_name",
+        type: "input",
+        message: "What is the name of the new Role?",
+      },
+      {
+        name: "last_name",
+        type: "input",
+        message: "What is the salary of the new Role?",
+      },
+      {
+        name: "department_id",
+        type: "list",
+        message: "What department does this role fall under?",
+        choices: choiceNames,
+      }
+    ])
+    .then((answer) => {
+      console.log(answer)
+      const query = "INSERT INTO role SET ?";
+      connection.query(query, answer, (err, res) => {
+        if (err) throw err;
+        console.log(res);
+        allRole();
+      });
+    });
+  });
 };
