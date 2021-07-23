@@ -68,7 +68,7 @@ const mainMenu = () => {
 };
 
 const allEmployee = () => {
-  const query = "SELECT * FROM employee";
+  const query = "SELECT role_id, first_name, last_name, title, salary FROM employee INNER JOIN role ON employee.role_id = role.id";
   connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -156,48 +156,68 @@ const addRole = () => {
 };
 
 const addEmployee = () => {
-  const query = "SELECT * FROM department";
+  const query = "SELECT * FROM role";
   connection.query(query, [], (err, res) => {
     if (err) throw err;
-    const choiceNames = [];
+    const choiceRoles = [];
+    const choiceMngr = [];
+    let manager_id
     for (let i = 0; i < res.length; i++) {
       const object = {
-        name: res[i].name,
+        name: res[i].title,
         value: res[i].id,
       };
-      choiceNames.push(object);
+      choiceRoles.push(object);
+      if (res[i].title === "Regional Manager"){
+        manager_id = res[i].id
+      }
     }
-    inquirer
+    console.log(choiceRoles)
+    console.log(manager_id)
+    connection.query(`SELECT * FROM employee WHERE role_id = ${manager_id}`, (err,res)=>{
+      console.log(res)
+      for(let i=0; i < res.length; i++){
+        const object = {
+          name: `${res[i].first_name} ${res[i].last_name}`,
+          value: res[i].id,
+        }
+        choiceMngr.push(object)
+      }
+      inquirer
       .prompt([
         {
           name: "first_name",
           type: "input",
-          message: "What is the name of the new Role?",
+          message: "What is the first name of the employee?",
         },
         {
           name: "last_name",
           type: "input",
-          message: "What is the salary of the new Role?",
+          message: "What is the last name of the employee?",
         },
         {
           name: "role_id",
           type: "list",
           message: "What role does your employee have?",
-          choices: choiceNames,
+          choices: choiceRoles,
         },
+        {
+          name: "manager_id",
+          type: "list",
+          message: "Select a manager this employee will be under.",
+          choices: choiceMngr
+        }
       ])
       .then((answer) => {
         console.log(answer);
-        const query = "INSERT INTO role SET ?";
+        const query = "INSERT INTO employee SET ?";
         connection.query(query, answer, (err, res) => {
           if (err) throw err;
           console.log(res);
-          allRole();
+          allEmployee();
         });
       });
+    })
+    
   });
 };
-
-const updateRole = () => {
-
-}
